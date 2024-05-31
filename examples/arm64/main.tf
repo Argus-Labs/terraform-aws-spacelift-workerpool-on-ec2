@@ -13,19 +13,45 @@ provider "aws" {
   region = "us-west-2"
 }
 
-data "aws_vpc" "this" {
-  default = true
+resource "aws_vpc" "this" {
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
+
+  tags = {
+    Name = "spacelift-vpc"
+  }
 }
 
-data "aws_security_group" "this" {
-  name   = "default"
-  vpc_id = data.aws_vpc.this.id
+resource "aws_subnet" "this" {
+  vpc_id            = aws_vpc.this.id
+  cidr_block        = "10.0.1.0/24"
+  availability_zone = "us-west-2a"
+
+  tags = {
+    Name = "spacelift-subnet"
+  }
 }
 
-data "aws_subnets" "this" {
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.this.id]
+resource "aws_security_group" "this" {
+  vpc_id = aws_vpc.this.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "main-security-group"
   }
 }
 
@@ -61,11 +87,11 @@ module "this" {
   EOT
   ami_id                     = data.aws_ami.this.id
   ec2_instance_type          = "m7g.medium"
-  security_groups            = [data.aws_security_group.this.id]
+  security_groups            = [aws_security_group.this.id]
   spacelift_api_key_endpoint = var.spacelift_api_key_endpoint
   spacelift_api_key_id       = var.spacelift_api_key_id
   spacelift_api_key_secret   = var.spacelift_api_key_secret
-  vpc_subnets                = data.aws_subnets.this.ids
+  vpc_subnets                = aws_subnet.this.id
   worker_pool_id             = var.worker_pool_id
   min_size = 0
   max_size = 1
