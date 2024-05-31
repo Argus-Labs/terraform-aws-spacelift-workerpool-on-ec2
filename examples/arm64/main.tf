@@ -37,9 +37,9 @@ resource "aws_security_group" "this" {
   vpc_id = aws_vpc.this.id
 
   ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -51,7 +51,7 @@ resource "aws_security_group" "this" {
   }
 
   tags = {
-    Name = "main-security-group"
+    Name = "spacelift-security-group"
   }
 }
 
