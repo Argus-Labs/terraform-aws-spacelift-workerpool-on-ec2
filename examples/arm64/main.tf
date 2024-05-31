@@ -56,11 +56,11 @@ module "this" {
   source = "../../"
 
   configuration              = <<-EOT
-    export SPACELIFT_TOKEN="<token-here>"
-    export SPACELIFT_POOL_PRIVATE_KEY="<private-key-here>"
+    export SPACELIFT_TOKEN="${var.spacelift_token}"
+    export SPACELIFT_POOL_PRIVATE_KEY="${var.spacelift_pool_private_key}"
   EOT
   ami_id                     = data.aws_ami.this.id
-  ec2_instance_type          = "t4g.micro"
+  ec2_instance_type          = "m7g.medium"
   security_groups            = [data.aws_security_group.this.id]
   spacelift_api_key_endpoint = var.spacelift_api_key_endpoint
   spacelift_api_key_id       = var.spacelift_api_key_id

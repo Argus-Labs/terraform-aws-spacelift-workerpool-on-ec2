@@ -1,3 +1,14 @@
+variable "spacelift_token" {
+  type        = string
+  description = "Spacelift API token"
+}
+
+variable "spacelift_pool_private_key" {
+  type        = string
+  sensitive   = true
+  description = "Private key corresponding to the Spacelift API token to use"
+}
+
 variable "spacelift_api_key_id" {
   type        = string
   description = "ID of the Spacelift API key to use"
