@@ -35,8 +35,8 @@ resource "aws_subnet" "this" {
 
 data "aws_subnets" "this" {
   filter {
-    name   = "vpc-id"
-    values = [aws_vpc.this.id]
+    name   = "tag:Name"
+    values = ["spacelift-vpc"]
   }
 }
 
