@@ -33,6 +33,14 @@ resource "aws_subnet" "this" {
   }
 }
 
+data "aws_subnets" "this" {
+  filter {
+    name   = "vpc-id"
+    values = [aws_vpc.this.id]
+  }
+}
+
+
 resource "aws_security_group" "this" {
   vpc_id = aws_vpc.this.id
 
@@ -91,7 +99,7 @@ module "this" {
   spacelift_api_key_endpoint = var.spacelift_api_key_endpoint
   spacelift_api_key_id       = var.spacelift_api_key_id
   spacelift_api_key_secret   = var.spacelift_api_key_secret
-  vpc_subnets                = aws_subnet.this.id
+  vpc_subnets                = data.aws_subnets.this.id
   worker_pool_id             = var.worker_pool_id
   min_size = 0
   max_size = 1
